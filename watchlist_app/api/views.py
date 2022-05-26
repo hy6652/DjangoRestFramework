@@ -6,7 +6,6 @@ from rest_framework.views      import APIView
 from watchlist_app.models          import Movie
 from watchlist_app.api.serializers import MovieSerializer
 
-# class based view는 url 쪽에서 as_view()를 사용해서 get, post, put, delete method를 매칭할 수 있게 해주기 때문에 따로 decorator를 사용하거나 method명을 써주거나 할 필요가 없다.
 class MovieListAV(APIView):
     def get(self, request):
         movies     = Movie.objects.all()
