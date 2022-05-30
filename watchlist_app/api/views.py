@@ -1,5 +1,8 @@
 from django.shortcuts import get_object_or_404
 
+from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework             import filters
 from rest_framework             import status
 from rest_framework.response    import Response
 from rest_framework.views       import APIView
@@ -15,6 +18,21 @@ from watchlist_app.api.throttling  import ReviewCreateThrottle, ReviewListThrott
 from watchlist_app.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from watchlist_app.models          import WatchList, StreamPlatform, Review
 from watchlist_app.api.serializers import ReviewSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatform
+
+
+class UserReview(generics.ListAPIView):
+    # queryset         = Review.objects.all()
+    serializer_class   = ReviewSerializer
+    # permission_classes = [IsAuthenticated]
+    # throttle_classes   = [UserRateThrottle, AnonRateThrottle]
+
+    # def get_queryset(self):
+    #     username = self.kwargs['username']
+    #     return Review.objects.filter(review_user__username=username)
+    
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        return Review.objects.filter(review_user__username=username)
 
 
 class ReviewCreate(generics.CreateAPIView):
@@ -49,8 +67,13 @@ class ReviewCreate(generics.CreateAPIView):
 class ReviewList(generics.ListAPIView):
     # queryset         = Review.objects.all()
     serializer_class   = ReviewSerializer
-    permission_classes = [IsAuthenticated]
-    throttle_classes   = [UserRateThrottle, AnonRateThrottle]
+    # permission_classes = [IsAuthenticated]
+    # throttle_classes   = [UserRateThrottle, AnonRateThrottle]
+
+    # filter_backends를 사용할 때, 어떤 field를 filter할 것인지 언급해야 한다.
+    # filter_backends는 [] 내부에 있는 filter를 사용한다는 의미이고, filterset_fileds가 어떤 field를 filter 할 것인지를 의미한다.
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review_user__username', 'active']
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -152,6 +175,14 @@ class StreamDetailAV(APIView):
         platform = StreamPlatform.objects.get(pk=pk)
         platform.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# for testing
+class WatchList(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['avg_rating']
 
 
 class WatchListAV(APIView):
