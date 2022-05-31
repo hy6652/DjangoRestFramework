@@ -14,6 +14,7 @@ from rest_framework.throttling  import UserRateThrottle, AnonRateThrottle, Scope
 # from rest_framework import mixins
 # from rest_framework.decorators import api_view
 
+from watchlist_app.api.pagination  import WatchListPagination, WatchListLOPagination, WatchListCPagination
 from watchlist_app.api.throttling  import ReviewCreateThrottle, ReviewListThrottle
 from watchlist_app.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from watchlist_app.models          import WatchList, StreamPlatform, Review
@@ -178,11 +179,12 @@ class StreamDetailAV(APIView):
 
 
 # for testing
-class WatchList(generics.ListAPIView):
-    queryset = WatchList.objects.all()
+class WatchListGV(generics.ListAPIView):
+    queryset         = WatchList.objects.all()
     serializer_class = WatchListSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['avg_rating']
+    # filter_backends  = [filters.OrderingFilter]
+    # ordering_fields  = ['avg_rating']
+    pagination_class = WatchListCPagination
 
 
 class WatchListAV(APIView):
