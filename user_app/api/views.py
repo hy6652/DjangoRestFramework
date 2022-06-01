@@ -31,12 +31,6 @@ def registration_view(request):
             data['email']    = account.email
             data['token']    = token
 
-            # refresh = RefreshToken.for_user(account)
-            # data['token'] = {
-            #                     'refresh': str(refresh),
-            #                     'access': str(refresh.access_token),
-            #                 }
-
         else:
             data = serializer.errors
             
