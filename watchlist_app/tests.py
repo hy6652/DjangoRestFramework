@@ -42,8 +42,7 @@ class WatchListTestCase(APITestCase):
         self.token = Token.objects.get(user__username=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-        self.stream = models.StreamPlatform.objects.create(name="test", about="about test", website="https://www.example.com")
-
+        self.stream    = models.StreamPlatform.objects.create(name="test", about="about test", website="https://www.example.com")
         self.watchlist = models.WatchList.objects.create(platform=self.stream, title='example title', storyline='example storyline', active=True)
 
     def test_watchlist_create(self):
@@ -82,13 +81,30 @@ class ReviewTestCase(APITestCase):
         self.token = Token.objects.get(user__username=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-        self.stream = models.StreamPlatform.objects.create(name="test", about="about test", website="https://www.example.com")
-
-        self.watchlist = models.WatchList.objects.create(platform=self.stream, title='example title', storyline='example storyline', active=True)
-
-        self.watchlist2 = models.WatchList.objects.create(platform=self.stream, title='example title', storyline='example storyline', active=True)
-
-        self.review = models.Review.objects.create(review_user=self.user, rating=5, description='test desc', watchlist=self.watchlist2, active=True)
+        self.stream = models.StreamPlatform.objects.create(
+                                        name="test",
+                                        about="about test",
+                                        website="https://www.example.com"
+                                    )
+        self.watchlist = models.WatchList.objects.create(
+                                        platform=self.stream,
+                                        title='example title',
+                                        storyline='example storyline',
+                                        active=True
+                                    )
+        self.watchlist2 = models.WatchList.objects.create(
+                                        platform=self.stream,
+                                        title='example title',
+                                        storyline='example storyline',
+                                        active=True
+                                    )
+        self.review = models.Review.objects.create(
+                                review_user=self.user,
+                                rating=5,
+                                description='test desc',
+                                watchlist=self.watchlist2,
+                                active=True
+                            )
 
     def test_review_create(self):
         data = {
